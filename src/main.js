@@ -1,3 +1,8 @@
+import { getTasks, addTask, removeTask } from './js/tasks.js';
+import { renderTasks } from './js/render-tasks.js';
+import refs from './js/refs.js';
+import { setThemeClass } from './js/theme-switcher.js';
+
 /*
   Створи список справ.
   На сторінці є два інпути які має вводиться назва і текст задачі.
@@ -14,3 +19,39 @@
       <p>Текст</p>
   </li>
 */
+
+setThemeClass();
+renderTasks(getTasks());
+
+refs.form.addEventListener('submit', e => {
+  e.preventDefault();
+
+  const form = e.target;
+
+  const name = form.elements['taskName'].value;
+  const description = form.elements['taskDescription'].value;
+
+  if (
+    !form.elements['taskName'].value ||
+    !form.elements['taskDescription'].value
+  ) {
+    alert('Please fill out task form');
+    return;
+  }
+
+  addTask(name, description);
+  renderTasks(getTasks());
+
+  form.reset();
+});
+
+refs.tasksListEl.addEventListener('click', e => {
+  if (!e.target.classList.contains('task-list-item-btn')) {
+    return;
+  }
+
+  const taskLiEl = e.target.closest('.task-list-item');
+  removeTask(taskLiEl.dataset.id);
+
+  renderTasks(getTasks());
+});
